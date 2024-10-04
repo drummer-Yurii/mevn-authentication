@@ -6,11 +6,13 @@ const mongoose = require('mongoose');
 const path = require('path');
 const corsOptions = require('./config/cors');
 const connectDB = require('./config/database');
+const credentials = require('./middleware/credentials');
 
 const app = express();
 const PORT = 3000;
 connectDB();
 
+app.use(credentials);
 app.use(cors(corsOptions));
 app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
