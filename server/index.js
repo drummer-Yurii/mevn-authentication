@@ -7,6 +7,7 @@ const path = require('path');
 const corsOptions = require('./config/cors');
 const connectDB = require('./config/database');
 const credentials = require('./middleware/credentials');
+const errorHandlerMiddleware = require('./middleware/error_handler');
 
 const app = express();
 const PORT = 3000;
@@ -18,6 +19,7 @@ app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
 app.use(cookieParser());
 app.use('/static', express.static(path.join(__dirname, 'public')));
+app.use(errorHandlerMiddleware);
 
 
 app.listen(PORT, () => {
