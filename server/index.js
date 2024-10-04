@@ -5,9 +5,11 @@ const cookieParser = require('cookie-parser');
 const mongoose = require('mongoose');
 const path = require('path');
 const corsOptions = require('./config/cors');
+const connectDB = require('./config/database');
 
 const app = express();
 const PORT = 3000;
+connectDB();
 
 app.use(cors(corsOptions));
 app.use(express.urlencoded({ extended: false }));
