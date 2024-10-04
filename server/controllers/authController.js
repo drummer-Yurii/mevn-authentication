@@ -1,17 +1,19 @@
-const register = (req, res) => { 
-    
-}
-const login = (req, res) => { 
+const User = require('../models/User');
 
-}
-const logout = (req, res) => { 
+const register = (req, res) => {
+  res.sendStatus(200);
+};
+const login = (req, res) => {
+  res.sendStatus(200);
+};
+const logout = (req, res) => {
+  res.sendStatus(200);
+};
+const refresh = (req, res) => {
+  res.sendStatus(200);
+};
+const user = (req, res) => {
+  res.sendStatus(200);
+};
 
-}
-const refresh = (req, res) => { 
-
-}
-const user = (req, res) => { 
-
-}
-
-module.exports = {register, login, logout, refresh, user};
+module.exports = { register, login, logout, refresh, user };
