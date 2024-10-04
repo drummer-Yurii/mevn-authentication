@@ -1,4 +1,4 @@
-require('dotenv').config;
+require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
 const cookieParser = require('cookie-parser');
@@ -33,6 +33,9 @@ app.all('*', (req, res) => {
   }
 });
 
-app.listen(PORT, () => {
-  console.log(`listening on port: ${PORT}`);
+mongoose.connection.once('open', () => {
+  console.log('DB connected');
+  app.listen(PORT, () => {
+    console.log(`listening on port: ${PORT}`);
+  });
 });
