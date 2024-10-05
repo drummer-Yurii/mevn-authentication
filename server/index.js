@@ -8,6 +8,7 @@ const corsOptions = require('./config/cors');
 const connectDB = require('./config/database');
 const credentials = require('./middleware/credentials');
 const errorHandlerMiddleware = require('./middleware/error_handler');
+const authenticationMiddleware = require('./middleware/authentication');
 
 const app = express();
 const PORT = 3000;
@@ -18,6 +19,7 @@ app.use(cors(corsOptions));
 app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
 app.use(cookieParser());
+app.use(authenticationMiddleware);
 app.use('/static', express.static(path.join(__dirname, 'public')));
 app.use(errorHandlerMiddleware);
 

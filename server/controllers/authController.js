@@ -11,7 +11,7 @@ const register = async (req, res) => {
     return res.status(422).json({ message: 'Password do not match' });
   }
   const userExists = await User.exists({ email }).exec();
-  if (userExists) return res.status(409);
+  if (userExists) return res.sendStatus(409);
   try {
     hashedPassword = await bcrypt.hash(password, 10);
     await User.create({ email, username, password: hashedPassword, first_name, last_name });
@@ -20,7 +20,6 @@ const register = async (req, res) => {
     return res.status(400).json({ message: 'Could not register' });
   }
 };
-
 const login = async (req, res) => {
   const { email, password } = req.body;
   if (!email || !password) {
