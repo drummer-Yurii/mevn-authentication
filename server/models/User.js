@@ -38,6 +38,11 @@ const UserSchema = Schema(
           return this.first_name + ' ' + this.last_name;
         },
       },
+      id: {
+        get() {
+          return this._id;
+        },
+      },
     },
   },
 );

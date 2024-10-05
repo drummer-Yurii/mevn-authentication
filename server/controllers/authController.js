@@ -36,7 +36,7 @@ const login = async (req, res) => {
   }
   const accessToken = jwt.sign(
     {
-      username: user.username,
+      id: user.id,
     },
     process.env.ACCESS_TOKEN_SECRET,
     {
@@ -45,7 +45,7 @@ const login = async (req, res) => {
   );
   const refreshToken = jwt.sign(
     {
-      username: user.username,
+      id: user.id,
     },
     process.env.REFRESH_TOKEN_SECRET,
     {
@@ -78,8 +78,25 @@ const logout = async (req, res) => {
   res.clearCookie('refresh_token', { httpOnly: true, sameSite: 'None', secure: true });
   res.sendStatus(204);
 };
-const refresh = (req, res) => {
-  res.sendStatus(200);
+const refresh = async (req, res) => {
+  const cookies = req.cookies;
+  if (!cookies.refresh_token) {
+    return res.sendStatus(401);
+  }
+  const refreshToken = cookies.refresh_token;
+  const user = await User.findOne({ refresh_token: refreshToken }).exec();
+  if (!user) {
+    return res.sendStatus(403);
+  }
+  jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET, (err, decoded) => {
+    if (err || user.id !== decoded.id) {
+      return res.sendStatus(403);
+    }
+    const accessToken = jwt.sign({ id: decoded.id }, process.env.ACCESS_TOKEN_SECRET, {
+      expiresIn: '1800s',
+    });
+    res.json({ access_token: accessToken });
+  });
 };
 const user = (req, res) => {
   res.sendStatus(200);
