@@ -56,9 +56,9 @@ const login = async (req, res) => {
   await user.save();
   res.cookie('refresh_token', refreshToken, {
     httpOnly: true,
-    maxAge: 24 * 60 * 60 * 1000,
     sameSite: 'None',
     secure: true,
+    maxAge: 24 * 60 * 60 * 1000,
   });
   res.json({ access_token: accessToken });
 };
@@ -98,8 +98,9 @@ const refresh = async (req, res) => {
     res.json({ access_token: accessToken });
   });
 };
-const user = (req, res) => {
-  res.sendStatus(200);
+const user = async (req, res) => {
+  const user = req.user;
+  return res.status(200).json(user);
 };
 
 module.exports = { register, login, logout, refresh, user };
