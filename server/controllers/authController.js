@@ -21,8 +21,41 @@ const register = async (req, res) => {
   }
 };
 
-const login = (req, res) => {
-  res.sendStatus(200);
+const login = async (req, res) => {
+  const { email, password } = req.body;
+  if (!email || !password) {
+    return res.status(422).json({ message: 'Invalid fields' });
+  }
+  const user = await User.findOne({ email });
+  if (!user) {
+    return res.status(401).json({ message: 'Email or password is incorrect' });
+  }
+  const match = await bcrypt.compare(password, user.password);
+  if (!match) {
+    return res.status(401).json({ message: 'Email or password is incorrect' });
+  }
+  const accessToken = jwt.sign(
+    {
+      username: user.username,
+    },
+    process.env.ACCESS_TOKEN_SECRET,
+    {
+      expiresIn: '1800s',
+    },
+  );
+  const refreshToken = jwt.sign(
+    {
+      username: user.username,
+    },
+    process.env.REFRESH_TOKEN_SECRET,
+    {
+      expiresIn: '1d',
+    },
+  );
+  user.refresh_token = refreshToken;
+  await user.save();
+  res.cookie('refresh_token', refreshToken, { httpOnly: true, maxAge: 24 * 60 * 60 * 1000 });
+  res.json({ access_token: accessToken });
 };
 const logout = (req, res) => {
   res.sendStatus(200);
