@@ -26,7 +26,7 @@ const login = async (req, res) => {
   if (!email || !password) {
     return res.status(422).json({ message: 'Invalid fields' });
   }
-  const user = await User.findOne({ email });
+  const user = await User.findOne({ email }).exec();
   if (!user) {
     return res.status(401).json({ message: 'Email or password is incorrect' });
   }
@@ -54,11 +54,29 @@ const login = async (req, res) => {
   );
   user.refresh_token = refreshToken;
   await user.save();
-  res.cookie('refresh_token', refreshToken, { httpOnly: true, maxAge: 24 * 60 * 60 * 1000 });
+  res.cookie('refresh_token', refreshToken, {
+    httpOnly: true,
+    maxAge: 24 * 60 * 60 * 1000,
+    sameSite: 'None',
+    secure: true,
+  });
   res.json({ access_token: accessToken });
 };
-const logout = (req, res) => {
-  res.sendStatus(200);
+const logout = async (req, res) => {
+  const cookies = req.cookies;
+  if (!cookies.refresh_token) {
+    return res.sendStatus(204);
+  }
+  const refreshToken = cookies.refresh_token;
+  const user = await User.findOne({ refresh_token: refreshToken }).exec();
+  if (!user) {
+    res.clearCookie('refresh_token', { httpOnly: true, sameSite: 'None', secure: true });
+    return res.sendStatus(204);
+  }
+  user.refresh_token = null;
+  await user.save();
+  res.clearCookie('refresh_token', { httpOnly: true, sameSite: 'None', secure: true });
+  res.sendStatus(204);
 };
 const refresh = (req, res) => {
   res.sendStatus(200);
