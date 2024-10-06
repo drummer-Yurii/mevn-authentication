@@ -5,7 +5,7 @@ import { computed } from 'vue'
 const authStore = useAuthStore()
 
 const user = computed(() => {
-  return authStore.user
+  return authStore.userDetail
 })
 
 const getUser = async () => {
