@@ -1,4 +1,29 @@
-<script setup lang="ts"></script>
+<script setup lang="ts">
+import { useAuthStore } from '@/stores/auth'
+import { computed } from 'vue'
+import { useRouter } from 'vue-router'
+
+const authStore = useAuthStore()
+const router = useRouter()
+
+const user = computed(() => {
+  return authStore.user
+})
+const isAuthenticated = computed(() => {
+  return authStore.isAuthenticated
+})
+
+const logout = async () => {
+  await authStore
+    .logout()
+    .then(() => {
+      router.replace({ name: 'home' })
+    })
+    .catch((err) => {
+      console.log(err.message)
+    })
+}
+</script>
 
 <template>
   <nav class="navbar navbar-expand-lg bg-light">
@@ -24,7 +49,7 @@
           </li>
         </ul>
         <ul class="navbar-nav mx-2 mb-2 mb-lg-0">
-          <li class="nav-item dropdown">
+          <li v-if="isAuthenticated" class="nav-item dropdown">
             <a
               class="nav-link dropdown-toggle"
               href="#"
@@ -32,26 +57,28 @@
               data-bs-toggle="dropdown"
               aria-expanded="false"
             >
-              User
+              {{ user.username }}
             </a>
             <ul class="dropdown-menu">
               <li>
-                <router-link :to="{ name: 'user' }" class="dropdown-item">Username</router-link>
+                <router-link :to="{ name: 'user' }" class="dropdown-item">Profile</router-link>
               </li>
               <li><hr class="dropdown-divider" /></li>
-              <li><button class="dropdown-item btn btn-danger">Logout</button></li>
+              <li><button @click="logout" class="dropdown-item btn btn-danger">Logout</button></li>
             </ul>
           </li>
-          <li class="nav-item">
-            <router-link :to="{ name: 'login' }" class="nav-link" aria-current="page">
-              Login
-            </router-link>
-          </li>
-          <li class="nav-item">
-            <router-link :to="{ name: 'register' }" class="nav-link" aria-current="page">
-              Register
-            </router-link>
-          </li>
+          <template v-else>
+            <li class="nav-item">
+              <router-link :to="{ name: 'login' }" class="nav-link" aria-current="page">
+                Login
+              </router-link>
+            </li>
+            <li class="nav-item">
+              <router-link :to="{ name: 'register' }" class="nav-link" aria-current="page">
+                Register
+              </router-link>
+            </li>
+          </template>
         </ul>
       </div>
     </div>
