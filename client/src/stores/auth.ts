@@ -40,6 +40,15 @@ export const useAuthStore = defineStore('auth', {
         isAuthenticated: (state: State) => state.user?.id ? true : false
     },
     actions: {
+        async attempt() {
+            try {
+                await this.refresh()
+                await this.getUser()
+            } catch (error) {
+                return
+            }
+            return
+        },
         async login(payload: LoginData) {
             try {
                 const { data } = await useApi().post(`/api/auth/login`, payload);
