@@ -1,4 +1,4 @@
-<script setup lang="ts">
+<script async setup lang="ts">
 import { useAuthStore } from '@/stores/auth'
 import { computed } from 'vue'
 
@@ -7,6 +7,11 @@ const authStore = useAuthStore()
 const user = computed(() => {
   return authStore.user
 })
+
+const getUser = async () => {
+  await authStore.getUser()
+}
+await getUser()
 </script>
 
 <template>
