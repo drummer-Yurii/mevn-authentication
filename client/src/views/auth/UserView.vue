@@ -1,6 +1,6 @@
-<script async setup lang="ts">
+<script setup lang="ts">
 import { useAuthStore } from '@/stores/auth'
-import { computed } from 'vue'
+import { computed, onMounted } from 'vue'
 
 const authStore = useAuthStore()
 
@@ -11,7 +11,10 @@ const user = computed(() => {
 const getUser = async () => {
   await authStore.getUser()
 }
-await getUser()
+
+onMounted(async () => {
+  await getUser()
+})
 </script>
 
 <template>
@@ -22,6 +25,7 @@ await getUser()
         <h6 class="card-subtitle mb-2 text-muted">Email: {{ user.email }}</h6>
         <h6 class="card-subtitle mb-2 text-muted">First Name: {{ user.first_name }}</h6>
         <h6 class="card-subtitle mb-2 text-muted">Last Name: {{ user.last_name }}</h6>
+        <h6 class="card-subtitle mb-2 text-muted">Full Name: {{ user.full_name }}</h6>
       </div>
     </div>
   </div>
