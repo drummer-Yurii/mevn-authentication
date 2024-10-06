@@ -15,7 +15,7 @@ const registerData = reactive<RegisterData>({
 })
 
 const submit = async () => {
-  authStore
+  await authStore
     .register(registerData)
     .then(() => {
       router.replace({ name: 'login' })
